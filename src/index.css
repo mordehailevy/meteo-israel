@@ -1,0 +1,184 @@
+/* ════════════════════════════════════════════════════
+   WEATHER ISRAEL — Design System Foundation
+   CSS Custom Properties + Global Resets + Sky System
+   ════════════════════════════════════════════════════ */
+
+:root {
+  /* Typography scale (1.2 ratio) */
+  --fs-xs:    0.694rem;
+  --fs-sm:    0.833rem;
+  --fs-base:  1rem;
+  --fs-md:    1.125rem;
+  --fs-lg:    1.44rem;
+  --fs-xl:    1.728rem;
+  --fs-hero:  clamp(3.5rem, 10vw, 6rem);
+
+  /* Spacing */
+  --sp-1: 0.25rem;  --sp-2: 0.5rem;  --sp-3: 0.75rem;
+  --sp-4: 1rem;     --sp-5: 1.25rem; --sp-6: 1.5rem;
+  --sp-8: 2rem;
+
+  /* Glass system */
+  --glass-bg:         rgba(255, 255, 255, 0.08);
+  --glass-bg-hover:   rgba(255, 255, 255, 0.14);
+  --glass-bg-active:  rgba(255, 255, 255, 0.22);
+  --glass-border:     rgba(255, 255, 255, 0.12);
+  --glass-shine:      rgba(255, 255, 255, 0.1);
+  --glass-blur:       50px;
+  --glass-saturate:   180%;
+  --glass-radius:     22px;
+  --glass-radius-sm:  14px;
+
+  /* Easing — spring-like curves */
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-back:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-smooth:    cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Durations */
+  --dur-fast:   150ms;
+  --dur-norm:   300ms;
+  --dur-slow:   500ms;
+  --dur-scene:  2s;
+
+  /* Shadows */
+  --shadow-card:       0 8px 32px rgba(0,0,0,.18), 0 2px 6px rgba(0,0,0,.06);
+  --shadow-card-hover: 0 16px 48px rgba(0,0,0,.22), 0 4px 10px rgba(0,0,0,.08);
+  --shadow-nav:        0 1px 8px rgba(0,0,0,.12);
+
+  /* Text opacity */
+  --text-primary:    rgba(255, 255, 255, 0.92);
+  --text-secondary:  rgba(255, 255, 255, 0.6);
+  --text-tertiary:   rgba(255, 255, 255, 0.38);
+}
+
+/* Hard Reset */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  padding: var(--sp-6);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  transition: background var(--dur-scene) var(--ease-smooth);
+  background: linear-gradient(180deg, #0f0c29 0%, #1a1a3e 35%, #302b63 100%);
+}
+
+#root {
+  width: 100%;
+  max-width: 520px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+a { color: inherit; text-decoration-skip-ink: auto; }
+img { max-width: 100%; display: block; }
+
+/* ══════════════════════════════════════════════
+   PHOTOREALISTIC SKY GRADIENTS
+   8-10 color stops sampled from real sky photos
+   ══════════════════════════════════════════════ */
+
+body[data-scene="clear-day"] {
+  background: linear-gradient(180deg,
+    #1a73e8 0%, #3b8eea 12%, #56a7f5 28%, #6fb8f7 42%,
+    #8ec8f8 56%, #aed8fb 70%, #d0e8fb 82%, #e8f0f6 92%, #f0ece4 100%);
+}
+body[data-scene="clear-day-cold"] {
+  background: linear-gradient(180deg,
+    #5a9fc7 0%, #72b0d4 15%, #8fc4e0 30%, #a6d2e8 45%,
+    #bddff0 60%, #d2e8f4 75%, #e4eff6 88%, #eef2f4 100%);
+}
+body[data-scene="clear-day-hot"] {
+  background: linear-gradient(180deg,
+    #0b5fbd 0%, #1272d4 12%, #2e8be8 25%, #4da2f0 38%,
+    #72b8f4 50%, #a3d0f4 62%, #d4e2e8 74%, #f0dcc0 86%,
+    #f5cfa0 94%, #f0c080 100%);
+}
+body[data-scene="clear-night"] {
+  background: linear-gradient(180deg,
+    #04070e 0%, #070c18 12%, #0b1326 25%, #101c38 40%,
+    #15254a 55%, #1b2e56 68%, #22375c 80%, #283d5c 90%, #2c4260 100%);
+}
+body[data-scene="partly-cloudy-day"] {
+  background: linear-gradient(180deg,
+    #4a8bbf 0%, #5d9cc8 15%, #74add4 30%, #8dbfdd 45%,
+    #a8cee6 60%, #c0dce9 75%, #d6e6ef 88%, #e4ecf0 100%);
+}
+body[data-scene="partly-cloudy-night"] {
+  background: linear-gradient(180deg,
+    #0a1020 0%, #0f1830 15%, #162240 30%, #1f2e52 45%,
+    #283a60 60%, #30456a 75%, #384e72 88%, #3e5478 100%);
+}
+body[data-scene="cloudy-day"] {
+  background: linear-gradient(180deg,
+    #68798a 0%, #758898 15%, #8496a4 30%, #94a5b0 45%,
+    #a3b3bc 60%, #b4c0c8 72%, #c4ced4 84%, #d0d8dc 100%);
+}
+body[data-scene="cloudy-night"] {
+  background: linear-gradient(180deg,
+    #10141e 0%, #161c28 15%, #1e2532 30%, #262e3c 45%,
+    #2e3848 58%, #364050 70%, #3e4858 82%, #454e5c 100%);
+}
+body[data-scene="rainy-day"] {
+  background: linear-gradient(180deg,
+    #3e4a58 0%, #485565 12%, #526272 28%, #5c6e7e 42%,
+    #687a8a 56%, #758898 70%, #8494a2 82%, #92a0ac 100%);
+}
+body[data-scene="rainy-night"] {
+  background: linear-gradient(180deg,
+    #080a10 0%, #0c1018 15%, #111620 30%, #161c28 45%,
+    #1c2330 58%, #222a38 70%, #283040 82%, #2e3648 100%);
+}
+body[data-scene="stormy-day"] {
+  background: linear-gradient(180deg,
+    #1e2428 0%, #252c32 12%, #2c3438 25%, #343c42 38%,
+    #3c444a 50%, #444e54 62%, #4e5860 74%, #586268 86%, #5e686e 100%);
+}
+body[data-scene="stormy-night"] {
+  background: linear-gradient(180deg,
+    #04060a 0%, #080a10 12%, #0c0e16 25%, #10131c 40%,
+    #141822 55%, #181c28 68%, #1c2230 80%, #202630 100%);
+}
+body[data-scene="snowy-day"] {
+  background: linear-gradient(180deg,
+    #8a9cac 0%, #96aab8 12%, #a4b6c2 25%, #b2c2cc 38%,
+    #bfcdd5 50%, #ccd8de 62%, #d8e2e8 74%, #e4ecf0 86%, #eef2f5 100%);
+}
+body[data-scene="snowy-night"] {
+  background: linear-gradient(180deg,
+    #0e1420 0%, #141c2a 15%, #1c2636 30%, #243040 45%,
+    #2c3a4c 60%, #344456 72%, #3c4e60 84%, #445868 100%);
+}
+body[data-scene="foggy-day"] {
+  background: linear-gradient(180deg,
+    #8e969e 0%, #98a0a8 12%, #a4abb2 25%, #b0b8be 38%,
+    #bcc2c8 50%, #c8cdd2 62%, #d4d8dc 74%, #dee2e5 86%, #e6e9ec 100%);
+}
+body[data-scene="foggy-night"] {
+  background: linear-gradient(180deg,
+    #12161e 0%, #181e28 15%, #202830 30%, #28303a 45%,
+    #303a44 58%, #38424c 70%, #404a54 82%, #48525c 100%);
+}
+
+/* Accessibility: reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,668 @@
+/* ═══════════════════════════════════════════════
+   WEATHER BACKGROUND — Cinematic Animated Sky
+   GPU-composited · contain-optimized · a11y-ready
+   ═══════════════════════════════════════════════ */
+
+/* ── Container ─────────────────────────── */
+.weather-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+  isolation: isolate;
+}
+
+/* ── Shared layer reset ────────────────── */
+.horizon-glow,
+.haze-layer,
+.sun-rays,
+.glow,
+.stars-layer,
+.clouds-layer,
+.rain-layer,
+.snow-layer,
+.fog-layer,
+.lightning-overlay {
+  position: absolute;
+  pointer-events: none;
+  transition: opacity var(--dur-scene, 2s) var(--ease-smooth, ease);
+}
+
+/* ─────────────────────────────────────────
+   HORIZON GLOW
+   ───────────────────────────────────────── */
+.horizon-glow {
+  bottom: 0;
+  left: -10%;
+  width: 120%;
+  height: 45%;
+  border-radius: 50% 50% 0 0;
+  opacity: 0;
+}
+
+.day .horizon-glow {
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    rgba(255, 240, 210, 0.18) 0%,
+    rgba(255, 220, 180, 0.08) 30%,
+    transparent 65%
+  );
+  opacity: 1;
+}
+
+.clear.day .horizon-glow {
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    rgba(255, 235, 200, 0.25) 0%,
+    rgba(255, 215, 160, 0.12) 35%,
+    transparent 65%
+  );
+}
+
+.cloudy.day .horizon-glow,
+.rainy.day .horizon-glow,
+.stormy.day .horizon-glow {
+  opacity: 0.15;
+}
+
+.night .horizon-glow {
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    rgba(20, 40, 80, 0.2) 0%,
+    rgba(15, 25, 50, 0.1) 40%,
+    transparent 70%
+  );
+  opacity: 0.6;
+}
+
+/* ─────────────────────────────────────────
+   ATMOSPHERIC HAZE
+   ───────────────────────────────────────── */
+.haze-layer {
+  inset: 0;
+  opacity: 0;
+}
+
+.day .haze-layer {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.04) 70%,
+    rgba(255, 255, 255, 0.08) 85%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+  opacity: 1;
+}
+
+.foggy .haze-layer {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 30%,
+    rgba(255, 255, 255, 0.18) 60%,
+    rgba(255, 255, 255, 0.22) 100%
+  );
+  opacity: 1;
+}
+
+.night .haze-layer { opacity: 0; }
+
+/* ─────────────────────────────────────────
+   SUN RAYS — conic light beams
+   GPU: transform-only animation
+   ───────────────────────────────────────── */
+.sun-rays {
+  top: -80px;
+  right: -60px;
+  width: 350px;
+  height: 350px;
+  opacity: 0;
+  will-change: transform;
+}
+
+.day .sun-rays {
+  opacity: 1;
+  background:
+    conic-gradient(
+      from 180deg,
+      transparent 0deg,
+      rgba(255, 245, 210, 0.04) 8deg,
+      transparent 16deg,
+      transparent 30deg,
+      rgba(255, 245, 210, 0.03) 38deg,
+      transparent 46deg,
+      transparent 60deg,
+      rgba(255, 245, 210, 0.05) 66deg,
+      transparent 74deg,
+      transparent 90deg,
+      rgba(255, 245, 210, 0.03) 96deg,
+      transparent 104deg,
+      transparent 120deg,
+      rgba(255, 245, 210, 0.04) 126deg,
+      transparent 134deg,
+      transparent 150deg,
+      rgba(255, 245, 210, 0.03) 156deg,
+      transparent 164deg,
+      transparent 180deg,
+      rgba(255, 245, 210, 0.04) 188deg,
+      transparent 196deg,
+      transparent 210deg,
+      rgba(255, 245, 210, 0.05) 216deg,
+      transparent 224deg,
+      transparent 240deg,
+      rgba(255, 245, 210, 0.03) 246deg,
+      transparent 254deg,
+      transparent 270deg,
+      rgba(255, 245, 210, 0.04) 278deg,
+      transparent 286deg,
+      transparent 300deg,
+      rgba(255, 245, 210, 0.03) 306deg,
+      transparent 314deg,
+      transparent 330deg,
+      rgba(255, 245, 210, 0.04) 338deg,
+      transparent 346deg,
+      transparent 360deg
+    );
+  animation: raysRotate 120s linear infinite;
+}
+
+.clear.day .sun-rays        { opacity: 1; }
+.partly-cloudy.day .sun-rays { opacity: 0.5; }
+.cloudy.day .sun-rays,
+.rainy.day .sun-rays,
+.stormy.day .sun-rays,
+.foggy.day .sun-rays         { opacity: 0; }
+
+@keyframes raysRotate {
+  to { transform: rotate(360deg); }
+}
+
+/* ─────────────────────────────────────────
+   GLOW — Sun / Moon
+   ───────────────────────────────────────── */
+.glow {
+  border-radius: 50%;
+  opacity: 0;
+}
+
+/* Sun */
+.day .glow {
+  top: -50px;
+  right: -30px;
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 250, 220, 0.55) 0%,
+    rgba(255, 235, 160, 0.3) 20%,
+    rgba(255, 220, 100, 0.12) 40%,
+    rgba(255, 200, 80, 0.04) 60%,
+    transparent 75%
+  );
+  opacity: 1;
+  animation: sunPulse 10s ease-in-out infinite;
+}
+
+.clear.day .glow {
+  width: 300px;
+  height: 300px;
+  top: -60px;
+  right: -40px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 252, 235, 0.65) 0%,
+    rgba(255, 240, 170, 0.35) 18%,
+    rgba(255, 225, 120, 0.15) 38%,
+    rgba(255, 210, 90, 0.06) 55%,
+    transparent 72%
+  );
+}
+
+.cloudy.day .glow,
+.rainy.day .glow,
+.stormy.day .glow { opacity: 0.08; }
+
+.foggy.day .glow {
+  opacity: 0.2;
+  filter: blur(30px);
+}
+
+@keyframes sunPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.06); opacity: 0.88; }
+}
+
+/* Moon */
+.night .glow {
+  top: 25px;
+  right: 35px;
+  width: 44px;
+  height: 44px;
+  background: radial-gradient(
+    circle at 38% 38%,
+    #f0ecd8 0%, #e0d8b8 40%, #c8bfa0 70%, transparent 72%
+  );
+  box-shadow:
+    0 0 20px 6px rgba(220, 210, 180, 0.1),
+    0 0 50px 16px rgba(200, 190, 160, 0.05),
+    0 0 80px 30px rgba(180, 170, 140, 0.03),
+    inset -8px -4px 0 rgba(0, 0, 0, 0.15);
+  opacity: 1;
+  animation: moonGlow 12s ease-in-out infinite;
+}
+
+.clear.night .glow {
+  box-shadow:
+    0 0 25px 8px rgba(220, 210, 180, 0.15),
+    0 0 60px 20px rgba(200, 190, 160, 0.08),
+    0 0 100px 40px rgba(180, 170, 140, 0.04),
+    inset -8px -4px 0 rgba(0, 0, 0, 0.15);
+}
+
+.cloudy.night .glow,
+.rainy.night .glow,
+.stormy.night .glow { opacity: 0.06; }
+
+@keyframes moonGlow {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(1.1); }
+}
+
+/* ─────────────────────────────────────────
+   STARS — twinkling dots
+   ───────────────────────────────────────── */
+.stars-layer {
+  inset: 0;
+  opacity: 0;
+}
+
+.night .stars-layer              { opacity: 1; }
+.partly-cloudy.night .stars-layer { opacity: 0.4; }
+.cloudy.night .stars-layer,
+.rainy.night .stars-layer,
+.stormy.night .stars-layer,
+.foggy.night .stars-layer         { opacity: 0; }
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, rgba(255, 255, 255, 0.6) 40%, transparent 70%);
+  animation: twinkle 4s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.7); }
+  40%      { opacity: 1; transform: scale(1.2); }
+  60%      { opacity: 0.8; transform: scale(1); }
+}
+
+/* ─────────────────────────────────────────
+   VOLUMETRIC CLOUDS
+   GPU: translateX + scale only
+   ───────────────────────────────────────── */
+.clouds-layer {
+  inset: 0;
+  opacity: 0;
+}
+
+.realistic-cloud {
+  position: absolute;
+  filter: blur(3px);
+  will-change: transform;
+}
+
+.realistic-cloud span {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+}
+
+/* Cloud 1 — large, front */
+.rc-1 {
+  top: 4%;
+  animation: drift 50s linear infinite;
+}
+.rc-1 span:nth-child(1) { width: 140px; height: 55px; top: 22px; left: 0; border-radius: 55px; }
+.rc-1 span:nth-child(2) { width: 80px; height: 80px; top: -15px; left: 20px; }
+.rc-1 span:nth-child(3) { width: 100px; height: 80px; top: -18px; left: 55px; }
+.rc-1 span:nth-child(4) { width: 65px; height: 55px; top: -2px; left: 105px; }
+
+/* Cloud 2 — far, small */
+.rc-2 {
+  top: 14%;
+  animation: drift-sm 70s linear infinite;
+  animation-delay: -20s;
+  transform: scale(0.6);
+}
+.rc-2 span { opacity: 0.5; }
+.rc-2 span:nth-child(1) { width: 110px; height: 42px; top: 18px; left: 0; border-radius: 42px; }
+.rc-2 span:nth-child(2) { width: 58px; height: 58px; top: -8px; left: 18px; }
+.rc-2 span:nth-child(3) { width: 72px; height: 56px; top: -10px; left: 48px; }
+.rc-2 span:nth-child(4) { width: 48px; height: 42px; top: 0; left: 82px; }
+
+/* Cloud 3 — large, front-low */
+.rc-3 {
+  top: 20%;
+  animation: drift 55s linear infinite;
+  animation-delay: -35s;
+}
+.rc-3 span:nth-child(1) { width: 170px; height: 60px; top: 28px; left: 0; border-radius: 60px; }
+.rc-3 span:nth-child(2) { width: 90px; height: 90px; top: -18px; left: 15px; }
+.rc-3 span:nth-child(3) { width: 115px; height: 88px; top: -22px; left: 60px; }
+.rc-3 span:nth-child(4) { width: 75px; height: 65px; top: -6px; left: 115px; }
+.rc-3 span:nth-child(5) { width: 55px; height: 48px; top: 6px; left: 155px; }
+
+/* Cloud 4 — wisp, high */
+.rc-4 {
+  top: 1%;
+  animation: drift-xs 80s linear infinite;
+  animation-delay: -10s;
+  transform: scale(0.4);
+}
+.rc-4 span { opacity: 0.4; }
+.rc-4 span:nth-child(1) { width: 85px; height: 32px; top: 14px; left: 0; border-radius: 32px; }
+.rc-4 span:nth-child(2) { width: 48px; height: 48px; top: -6px; left: 15px; }
+.rc-4 span:nth-child(3) { width: 42px; height: 36px; top: 0; left: 42px; }
+
+/* Cloud 5 — medium */
+.rc-5 {
+  top: 10%;
+  animation: drift-md 58s linear infinite;
+  animation-delay: -28s;
+  transform: scale(0.8);
+}
+.rc-5 span { opacity: 0.7; }
+.rc-5 span:nth-child(1) { width: 125px; height: 48px; top: 20px; left: 0; border-radius: 48px; }
+.rc-5 span:nth-child(2) { width: 70px; height: 70px; top: -12px; left: 22px; }
+.rc-5 span:nth-child(3) { width: 88px; height: 66px; top: -14px; left: 58px; }
+.rc-5 span:nth-child(4) { width: 55px; height: 48px; top: 0; left: 100px; }
+
+/* Cloud 6 — massive dramatic */
+.rc-6 {
+  top: 6%;
+  animation: drift-lg 75s linear infinite;
+  animation-delay: -48s;
+  transform: scale(1.15);
+}
+.rc-6 span:nth-child(1) { width: 180px; height: 65px; top: 32px; left: 0; border-radius: 65px; }
+.rc-6 span:nth-child(2) { width: 100px; height: 100px; top: -22px; left: 18px; }
+.rc-6 span:nth-child(3) { width: 125px; height: 95px; top: -26px; left: 72px; }
+.rc-6 span:nth-child(4) { width: 82px; height: 70px; top: -10px; left: 140px; }
+.rc-6 span:nth-child(5) { width: 60px; height: 55px; top: 4px; left: 180px; }
+
+/* Drift keyframes — preserve scale per cloud */
+@keyframes drift {
+  from { transform: translateX(-300px); }
+  to   { transform: translateX(calc(100vw + 300px)); }
+}
+@keyframes drift-sm {
+  from { transform: scale(0.6) translateX(-300px); }
+  to   { transform: scale(0.6) translateX(calc(100vw + 300px)); }
+}
+@keyframes drift-xs {
+  from { transform: scale(0.4) translateX(-300px); }
+  to   { transform: scale(0.4) translateX(calc(100vw + 300px)); }
+}
+@keyframes drift-md {
+  from { transform: scale(0.8) translateX(-300px); }
+  to   { transform: scale(0.8) translateX(calc(100vw + 300px)); }
+}
+@keyframes drift-lg {
+  from { transform: scale(1.15) translateX(-300px); }
+  to   { transform: scale(1.15) translateX(calc(100vw + 300px)); }
+}
+
+/* Cloud visibility by weather */
+.default .clouds-layer  { opacity: 0; }
+.clear .clouds-layer    { opacity: 0.15; }
+.partly-cloudy .clouds-layer { opacity: 0.55; }
+.cloudy .clouds-layer   { opacity: 0.85; }
+.rainy .clouds-layer    { opacity: 0.95; }
+.stormy .clouds-layer   { opacity: 1; }
+.snowy .clouds-layer    { opacity: 0.7; }
+.foggy .clouds-layer    { opacity: 0.25; }
+
+.clear .realistic-cloud span {
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: none;
+}
+
+/* Day cloud tints */
+.partly-cloudy.day .realistic-cloud span {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.06);
+}
+.cloudy.day .realistic-cloud span {
+  background: rgba(210, 215, 225, 0.8);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+}
+.rainy .realistic-cloud span {
+  background: rgba(75, 80, 95, 0.8);
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.12),
+    inset 0 -4px 12px rgba(0, 0, 0, 0.08);
+}
+.stormy .realistic-cloud span {
+  background: rgba(40, 42, 52, 0.88);
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.2),
+    inset 0 -6px 15px rgba(0, 0, 0, 0.1);
+}
+.snowy .realistic-cloud span {
+  background: rgba(200, 210, 225, 0.75);
+  box-shadow: 0 4px 18px rgba(255, 255, 255, 0.1);
+}
+
+/* Night cloud tints */
+.night .realistic-cloud span {
+  background: rgba(30, 35, 50, 0.65);
+  box-shadow: none;
+}
+.partly-cloudy.night .realistic-cloud span {
+  background: rgba(45, 50, 70, 0.5);
+}
+.cloudy.night .realistic-cloud span {
+  background: rgba(25, 30, 42, 0.75);
+}
+.rainy.night .realistic-cloud span {
+  background: rgba(15, 18, 28, 0.85);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+.stormy.night .realistic-cloud span {
+  background: rgba(8, 10, 16, 0.9);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Cloud blur by scene */
+.clear .realistic-cloud          { filter: blur(5px); }
+.partly-cloudy .realistic-cloud  { filter: blur(2px); }
+.cloudy .realistic-cloud         { filter: blur(2px); }
+.rainy .realistic-cloud          { filter: blur(1.5px); }
+.stormy .realistic-cloud         { filter: blur(1px); }
+.snowy .realistic-cloud          { filter: blur(3px); }
+.foggy .realistic-cloud          { filter: blur(8px); }
+
+/* ─────────────────────────────────────────
+   RAIN — angled streaks
+   GPU: translateY only
+   ───────────────────────────────────────── */
+.rain-layer {
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+.rainy .rain-layer  { opacity: 1; }
+.stormy .rain-layer { opacity: 1; }
+
+.raindrop {
+  position: absolute;
+  top: -30px;
+  width: 1.2px;
+  height: 22px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(180, 200, 230, 0.15) 30%,
+    rgba(180, 200, 230, 0.4) 100%
+  );
+  border-radius: 0 0 3px 3px;
+  transform: rotate(-4deg);
+  will-change: transform;
+  animation: rain-fall 0.65s linear infinite;
+}
+
+.stormy .raindrop {
+  height: 32px;
+  width: 1.8px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(180, 200, 230, 0.2) 20%,
+    rgba(180, 200, 230, 0.55) 100%
+  );
+  transform: rotate(-8deg);
+  animation-duration: 0.3s;
+}
+
+@keyframes rain-fall {
+  from { transform: translateY(0) rotate(-4deg); }
+  to   { transform: translateY(108vh) rotate(-4deg); }
+}
+
+/* ─────────────────────────────────────────
+   SNOW — gentle drift
+   GPU: translateY + translateX
+   ───────────────────────────────────────── */
+.snow-layer {
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+.snowy .snow-layer { opacity: 1; }
+
+.snowflake {
+  position: absolute;
+  top: -12px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.6) 40%,
+    rgba(255, 255, 255, 0.2) 70%,
+    transparent 100%
+  );
+  will-change: transform, opacity;
+  animation: snow-fall 8s linear infinite;
+}
+
+@keyframes snow-fall {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  5%   { opacity: 1; }
+  25%  { transform: translateY(25vh) translateX(15px); }
+  50%  { transform: translateY(50vh) translateX(-10px); }
+  75%  { transform: translateY(75vh) translateX(18px); }
+  95%  { opacity: 0.8; }
+  100% { transform: translateY(108vh) translateX(5px); opacity: 0; }
+}
+
+/* ─────────────────────────────────────────
+   FOG — rolling mist bands
+   GPU: translateX only
+   ───────────────────────────────────────── */
+.fog-layer {
+  inset: 0;
+  opacity: 0;
+}
+
+.foggy .fog-layer { opacity: 1; }
+
+.fog-band {
+  position: absolute;
+  width: 250%;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.fb-1 {
+  height: 40%;
+  bottom: -5%;
+  left: -60%;
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.04) 50%,
+    transparent 70%
+  );
+  animation: fog-drift 28s ease-in-out infinite alternate;
+}
+
+.fb-2 {
+  height: 50%;
+  bottom: -10%;
+  left: -40%;
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.06) 30%,
+    rgba(255, 255, 255, 0.02) 55%,
+    transparent 70%
+  );
+  animation: fog-drift 35s ease-in-out infinite alternate-reverse;
+}
+
+.fb-3 {
+  height: 30%;
+  top: 25%;
+  left: -50%;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 40%,
+    transparent 65%
+  );
+  animation: fog-drift 22s ease-in-out infinite alternate;
+  animation-delay: -8s;
+}
+
+.foggy.night .fog-band {
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    rgba(100, 120, 150, 0.12) 0%,
+    rgba(80, 100, 130, 0.06) 30%,
+    transparent 60%
+  );
+}
+
+@keyframes fog-drift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(20%); }
+}
+
+/* ─────────────────────────────────────────
+   LIGHTNING — dramatic flash
+   ───────────────────────────────────────── */
+.lightning-overlay {
+  inset: 0;
+  background: transparent;
+}
+
+.stormy .lightning-overlay {
+  animation: lightning 6s ease-in-out infinite;
+}
+
+@keyframes lightning {
+  0%, 86%, 89%, 91.5%, 93.5%, 100% { background: transparent; }
+  87%   { background: rgba(200, 215, 255, 0.18); }
+  88%   { background: rgba(255, 255, 255, 0.04); }
+  91%   { background: rgba(200, 215, 255, 0.12); }
+  93%   { background: rgba(180, 200, 240, 0.08); }
+}
