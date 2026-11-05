@@ -3,7 +3,7 @@ import { fetchCities } from "../services/api";
 import type { City } from "../services/api";
 import { addSearchHistory } from "../services/history";
 
-const WEATHER_API_KEY = "31d063ce9c564d9d831133455230512";
+const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY ?? "";
 
 function getWeatherScene(
   condition: string,
